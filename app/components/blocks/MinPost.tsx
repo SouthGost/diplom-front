@@ -86,7 +86,7 @@ export default function MinPost(props: post) {
                         enableMove={false}
                         trainingId={props.training.id}
                     />
-                    {/* <View style={styles.openButton}>
+                    <View style={styles.openButton}>
                         <Button
                             color={defaultStyles.colors.praimaryColor}
                             title="Развернуть"
@@ -94,7 +94,7 @@ export default function MinPost(props: post) {
                                 openTreaning(props.training);
                             }}
                         />
-                    </View> */}
+                    </View>
                 </View>
             </View>
         </>

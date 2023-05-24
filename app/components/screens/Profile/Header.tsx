@@ -7,16 +7,61 @@ import { useContext, useEffect, useState } from 'react';
 import Requests from '../../../scrypts/request';
 import { User } from '../../../types';
 import defaultStyles from '../../../styles/defaultStyles';
+import { requestWithToken } from '../../../scrypts/checkRefreshToken';
 
 type props = {
     profileInfo?: User,
 }
 
-
 export default function Header(props: props) {
-    const { setUser } = useContext<any>(AuthContext);
+    const { setUser, accessToken } = useContext<any>(AuthContext);
+    const [isSubscribe, setIsSubscribe] = useState<boolean>();
+    const [isWaitAnswer, setIsWaitAnswer] = useState(false);
 
+    useEffect(() => {
+        if (props.profileInfo !== undefined) {
+            requestWithToken(
+                (accessToken_) => Requests.getIsSubscribe(props.profileInfo!.id, accessToken_),
+                async (res) => {
+                    const data = await res.json();
+                    setIsSubscribe(data.isSubscribe);
+                },
+                () => {
+                    console.log("Не подис");
+                },
+                setUser,
+                accessToken,
+            );
+        }
+    }, [props.profileInfo])
 
+    function subscribe() {
+        requestWithToken(
+            (accessToken_) => Requests.subscribe(props.profileInfo!.id, accessToken_),
+            async (res) => {
+                setIsSubscribe(true);
+            },
+            () => {
+                console.log("Не получилось подписаться");
+            },
+            setUser,
+            accessToken,
+        );
+    }
+
+    function unsubscribe() {
+        requestWithToken(
+            (accessToken_) => Requests.unsubscribe(props.profileInfo!.id, accessToken_),
+            async (res) => {
+                setIsSubscribe(false);
+            },
+            () => {
+                console.log("Не получилось отписаться");
+            },
+            setUser,
+            accessToken,
+        );
+    }
 
     return (
         <View style={styles.header}
@@ -37,12 +82,25 @@ export default function Header(props: props) {
                         }
                     </Text>
                     <View style={styles.followButton}>
-                        <Button
-                            onPress={() => {
-                                
-                            }}
-                            title="Подписаться"
-                        />
+                        {isSubscribe !== undefined ?
+                            <Button
+                                disabled={isWaitAnswer}
+                                color={isSubscribe ? "#A9A9A9" : "#1E90FF"}
+                                onPress={() => {
+                                    setIsWaitAnswer(true);
+                                    if (isSubscribe) {
+                                        unsubscribe()
+                                    } else {
+                                        subscribe()
+                                    }
+                                    setIsWaitAnswer(false);
+                                }}
+                                title={isSubscribe ? "Отписаться" : "Подписаться"}
+                            />
+                            :
+                            <></>
+                        }
+
                     </View>
                 </View>
                 {/* <View>
@@ -96,7 +154,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         // backgroundColor: "red",
     },
-    followButton:{
+    followButton: {
         alignItems: 'center',
     },
     results: {

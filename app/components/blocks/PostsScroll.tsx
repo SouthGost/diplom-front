@@ -2,7 +2,6 @@ import React from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { ScrollView, View, Text, ActivityIndicator, StyleSheet, NativeScrollEvent } from 'react-native';
 import { AuthContext } from './../../context/AuthContext';
-import Navbar from './../../navigations/Navbar';
 import checkRefreshToken from './../../scrypts/checkRefreshToken';
 import Requests from './../../scrypts/request';
 import { Training } from './../../types';
@@ -10,44 +9,45 @@ import MinPost from './../blocks/MinPost';
 import defaultStyles from '../../styles/defaultStyles';
 
 type props = {
-    navigation: any,
     loadFunction: (lastId?: number) => Promise<any>,
     header?: JSX.Element,
-    emptyMessage?: string
+    emptyMessage?: string,
+    length: number,
+    elementView: (elem: any) => JSX.Element,
 }
 
 export default function PostsScroll(props: props) {
     const { accessToken, setUser } = useContext<any>(AuthContext);
-    const [trainings, setTrainings] = useState<Training[]>();
+    const [elements, setElements] = useState<Training[]>();
     const [isFinishRequest, setIsFinishRequest] = useState(true);
     const [isEnd, setIsEnd] = useState(false);
-
-    function checkEnd(trainings_: Training[]) {
-        if (trainings_.length < 3) {
+    // elements Elements
+    function checkEnd(newElements: Training[]) {
+        if (newElements.length < props.length) {
             setIsEnd(true);
         }
     }
 
-    async function setLoadTrainings(res: Response) {
+    async function setLoadElements(res: Response) {
         const data = await res.json();
-        checkEnd(data.trainings);
-        if (trainings !== undefined) {
-            setTrainings([
-                ...trainings,
-                ...data.trainings
-            ]);
-        } else {
-            setTrainings(data.trainings);
-        }
+        checkEnd(data.elements); // aga
+        setElements((prevElements) => {
+            if (prevElements !== undefined)
+                return [
+                    ...prevElements,
+                    ...data.elements
+                ];
+            return data.elements
+        });
     }
 
-    async function loadTrainings(lastID?: number) {
+    async function loadElements(lastID?: number) {
         setIsFinishRequest(false);
         try {
             console.log("Начало!!!");
             let res = await props.loadFunction(lastID);
             if (res.ok) {
-                setLoadTrainings(res);
+                setLoadElements(res);
                 console.log("КОНЕЦ???");
             } else {
                 const refreshData = await checkRefreshToken(setUser);
@@ -55,7 +55,7 @@ export default function PostsScroll(props: props) {
                 if (refreshData) {
                     res = await props.loadFunction(lastID);
                     if (res.ok) {
-                        setLoadTrainings(res);
+                        setLoadElements(res);
                     } else {
                         console.log("Не хороший ответ");
                     }
@@ -68,12 +68,14 @@ export default function PostsScroll(props: props) {
     }
 
     useEffect(() => {
-        loadTrainings();
-    }, []);
+        setElements(undefined)
+        loadElements();
+        console.log("zagruz")
+    }, [props.loadFunction]);
 
     function loadNextTraings() {
-        if (trainings !== undefined) {
-            loadTrainings(trainings[trainings.length - 1].id);
+        if (elements !== undefined) {
+            loadElements(elements[elements.length - 1].id);
         }
     }
 
@@ -86,12 +88,12 @@ export default function PostsScroll(props: props) {
 
     return (
         <>
-            {trainings === undefined ?
+            {elements === undefined ?
                 <View style={styles.content}>
                     <ActivityIndicator size={100} />
                 </View>
                 :
-                trainings.length == 0 ?
+                elements.length == 0 ?
                     <>
                         {props.header !== undefined ?
                             props.header
@@ -115,11 +117,9 @@ export default function PostsScroll(props: props) {
                             :
                             <></>
                         }
-                        {trainings.map(elem => <MinPost
-                            key={`post ${elem.id}`}
-                            training={elem}
-                            navigation={props.navigation}
-                        />)}
+                        {elements.map(
+                            props.elementView
+                        )}
                     </ScrollView >
             }
         </>

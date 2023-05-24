@@ -9,15 +9,15 @@ import Header from './Header';
 import PostsScroll from '../../blocks/PostsScroll';
 import { AuthContext } from '../../../context/AuthContext';
 import MyHeader from './MyHeader';
+import { requestWithToken } from '../../../scrypts/checkRefreshToken';
+import MinPost from '../../blocks/MinPost';
 
 
 
 export default function Profile({ route, navigation }: any) {
-    const { id } = useContext<any>(AuthContext);
+    const { accessToken, setUser, id } = useContext<any>(AuthContext);
     const { profileId } = route.params;
     const [profileInfo, setProfileInfo] = useState<User>();
-    const [HeaderPostsScroll, setHeaderPostsScroll] = useState<JSX.Element>();
-
     // const scrollOffsetY = useRef<Animated.Value>(new Animated.Value(0)).current;
 
     async function profileInfoLoad() {
@@ -36,37 +36,40 @@ export default function Profile({ route, navigation }: any) {
 
 
     useEffect(() => {
-        setHeaderPostsScroll(undefined);
         setProfileInfo(undefined);
         profileInfoLoad();
 
     }, [profileId])
 
-    useEffect(() => {
-        if (profileInfo !== undefined) {
-            setHeaderPostsScroll(
-                <PostsScroll
-                    header={
-                        id === profileId ?
-                            <MyHeader profileInfo={profileInfo} navigation={navigation} />
-                            :
-                            <Header profileInfo={profileInfo} />
-                    }
-                    navigation={navigation}
-                    emptyMessage='Начните пробежку в разделе тренировка'
-                    loadFunction={(lastId?: number) => {
-                        return Requests.getUserTrainings(profileInfo.id, lastId)
-                    }}
-                />
-            )
-        }
-    }, [profileInfo])
 
     return (
         <>
             <View style={styles.profile}>
                 {/* <Posts navigation={navigation} trainings={trainings}/> */}
-                {HeaderPostsScroll}
+                {profileInfo !== undefined ?
+                    <PostsScroll
+                        header={
+                            id === profileId ?
+                                <MyHeader profileInfo={profileInfo} navigation={navigation} />
+                                :
+                                <Header profileInfo={profileInfo} />
+                        }
+                        length={3}
+                        emptyMessage='Начните пробежку в разделе тренировка'
+                        loadFunction={(lastId?: number) => {
+                            return Requests.getUserTrainings(profileInfo.id, lastId)
+                        }}
+                        elementView={elem => <MinPost
+                            key={`post ${elem.id}`}
+                            training={elem}
+                            navigation={navigation}
+                        />}
+                    />
+                    :
+                    <></>
+                }
+
+                {/* {HeaderPostsScroll} */}
             </View>
             <Navbar navigation={navigation} />
         </>

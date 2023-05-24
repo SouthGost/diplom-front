@@ -3,14 +3,13 @@ import { SQLiteDatabase } from 'react-native-sqlite-storage';
 import {
     StyleSheet, Text, View, TouchableOpacity, Image, PermissionsAndroid, Permission
 } from 'react-native';
-import { TrainingContext } from '../../../context/TrainingContext';
 import { clearPoints, getDBConnection, getPoints } from '../../../scrypts/db';
 import Map from '../../blocks/Map';
 import { Point, Statistic } from '../../../types';
 import defaultStyles from '../../../styles/defaultStyles';
 import { AuthContext } from '../../../context/AuthContext';
 import Requests from '../../../scrypts/request';
-import checkRefreshToken from '../../../scrypts/checkRefreshToken';
+import checkRefreshToken, { requestWithToken } from '../../../scrypts/checkRefreshToken';
 import { convertDistance, convertPace, convertTime, getStatisticByPoints } from '../../../scrypts/sport';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -72,43 +71,57 @@ export default function StatisticView() {
 
     async function saveTrack() {
         console.log("Сохранение");
-        try {
-            const db = await getDBConnection();
-            // await clearPoints(db);
-            //проверять try catch лучше
-
-            let res = await Requests.finishTraining(points, accessToken);
-            if (res.ok) {
-                console.log("Хороший ответ1");
+        const db = await getDBConnection();
+        requestWithToken(
+            (accessToken_) => Requests.finishTraining(points, accessToken_),
+            async (res) => {
+                console.log("Хороший ответ");
                 const data = await res.json();
                 await clearPoints(db);
-                // navigation.navigate('Post', {
-                //     id: data.id,
-                //     user_login: data.user_login,
-                // });
-            } else {
-                const refreshData = await checkRefreshToken(setUser);
+            },
+            () => {
+                console.log("Не сохранился");
+            },
+            setUser,
+            accessToken,
+        );
+        // try {
 
-                if (refreshData) {
-                    res = await Requests.finishTraining(points, refreshData.accessToken);
-                    if (res.ok) {
-                        console.log("Хороший ответ2");
-                        const data = await res.json();
-                        await clearPoints(db);
-                        // navigation.navigate('Post', {
-                        //     id: data.id,
-                        //     user_login: data.user_login,
-                        // });
-                    } else {
-                        console.log("Не хороший ответ");
-                    }
-                }
-            }
-            //добавить сохранение для кнопки назад
-        } catch (error) {
-            console.log("Не сохранился(мб)");
-            console.log(error);
-        }
+        //     // await clearPoints(db);
+        //     //проверять try catch лучше
+
+        //     let res = await Requests.finishTraining(points, accessToken);
+        //     if (res.ok) {
+        //         console.log("Хороший ответ1");
+        //         const data = await res.json();
+        //         await clearPoints(db);
+        //         // navigation.navigate('Post', {
+        //         //     id: data.id,
+        //         //     user_login: data.user_login,
+        //         // });
+        //     } else {
+        //         const refreshData = await checkRefreshToken(setUser);
+
+        //         if (refreshData) {
+        //             res = await Requests.finishTraining(points, refreshData.accessToken);
+        //             if (res.ok) {
+        //                 console.log("Хороший ответ2");
+        //                 const data = await res.json();
+        //                 await clearPoints(db);
+        //                 // navigation.navigate('Post', {
+        //                 //     id: data.id,
+        //                 //     user_login: data.user_login,
+        //                 // });
+        //             } else {
+        //                 console.log("Не хороший ответ");
+        //             }
+        //         }
+        //     }
+        //     //добавить сохранение для кнопки назад
+        // } catch (error) {
+        //     console.log("Не сохранился(мб)");
+        //     console.log(error);
+        // }
     }
 
     return (
