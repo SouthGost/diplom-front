@@ -2,6 +2,7 @@ export type User = {
     id: number,
     name: string,
     surname: string,
+    avatar: string | null,
 }
 
 export type Point = {
@@ -27,5 +28,7 @@ export type Training = Statistic &{
     user: User,
     points: Point[],
     start_time: number,
-    pace_per_kilometers?: PacePerKilometer[]
+    pace_per_kilometers?: PacePerKilometer[],
+    best_pace: boolean,
+    best_distance: boolean,
 }

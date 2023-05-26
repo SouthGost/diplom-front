@@ -65,7 +65,7 @@ export function convertTime(value: number, hideMillisecond?: boolean) {
         time = sec;
         if (!hideMillisecond) {
             const sotih = add0(div(value % 1000, 10), 2);
-            time += `:${sotih}`;
+            time += `.${sotih}`;
         }
         time += " с";
     }

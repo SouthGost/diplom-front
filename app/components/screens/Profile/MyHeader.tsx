@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from 'react';
 import Requests from '../../../scrypts/request';
 import { User } from '../../../types';
 import defaultStyles from '../../../styles/defaultStyles';
+import { Appbar, Menu } from 'react-native-paper';
 
 type props = {
     navigation: any,
@@ -21,21 +22,28 @@ export default function MyHeader(props: props) {
 
 
     async function exit() {
+        setIsShowMenu(false)
         await AsyncStorage.removeItem("refresh_key");
         setUser(undefined, undefined);
         props.navigation.navigate('Login');
     }
 
+    async function openEditPage() {
+        setIsShowMenu(false)
+        props.navigation.navigate('EditProfile', {
+            profile: props.profileInfo
+        });
+    }
+
 
 
     return (
-        <View style={styles.header}
-        >
+        <View style={styles.header}>
             <View style={styles.main}>
                 <Image
                     style={styles.avatar}
                     source={{
-                        uri: 'https://reactnative.dev/img/tiny_logo.png',
+                        uri: Requests.getAvatar(props.profileInfo!.avatar),
                     }}
                 />
                 <View style={styles.column}>
@@ -47,7 +55,44 @@ export default function MyHeader(props: props) {
                         }
                     </Text>
                 </View>
-                <View>
+
+                <Menu
+                    visible={isShowMenu}
+                    onDismiss={() => { setIsShowMenu(false) }}
+                    anchor={
+                        <Pressable
+                            style={styles.menuButtonContainer}
+                            onPress={() => {
+                                // if (props.profileInfo) {
+                                    setIsShowMenu(!isShowMenu);
+                                // }
+                            }}
+                        >
+                            <Image
+                                style={styles.menuIcon}
+                                source={require("../../../../assets/3dots.png")}
+                            />
+                        </Pressable>
+                    }
+                >
+                    <Menu.Item
+                        title="Редактировать"
+                        onPress={() => { openEditPage() }}
+                    />
+                    <Menu.Item
+                        title="Выход"
+                        titleStyle={[
+                            styles.menuText,
+                            { color: "#e50000" }
+                        ]}
+                        onPress={() => {
+                            exit()
+                        }}
+                    />
+                </Menu>
+
+
+                {/* <View>
                     <View style={styles.menuButtonContainer}>
 
                         <Pressable
@@ -62,11 +107,6 @@ export default function MyHeader(props: props) {
                         </Pressable>
                         {isShowMenu ?
                             <View style={styles.menuContainer}>
-                                {/* <Pressable style={styles.menuItem}>
-                                    <Text style={styles.menuText}>
-                                        Редактировать
-                                    </Text>
-                                </Pressable> */}
                                 <Pressable
                                     style={styles.menuItem}
                                     onPress={() => {
@@ -87,14 +127,14 @@ export default function MyHeader(props: props) {
                             <></>
                         }
 
-                    </View>
-                    {/* <Button
+                    </View> */}
+                {/* <Button
                         onPress={() => {
                             exit();
                         }}
                         title="Выход"
                     /> */}
-                </View>
+                {/* </View> */}
 
             </View>
             {/* <View style={styles.results}>

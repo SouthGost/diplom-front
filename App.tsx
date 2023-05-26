@@ -3,17 +3,20 @@ import { View, KeyboardAvoidingView, Button, StatusBar, SafeAreaView, StyleSheet
 import Navigation from './app/navigations/Navigation';
 import defaultStyles from './app/styles/defaultStyles';
 import { AuthProvider } from './app/context/AuthContext';
+import { PaperProvider } from 'react-native-paper';
 
 function App() {
 
   return (
     <AuthProvider>
-      {/* <KeyboardAvoidingView> */}
+      <PaperProvider>
+        {/* <KeyboardAvoidingView> */}
         <SafeAreaView style={styles.SafeAreaView}>
           <StatusBar backgroundColor={defaultStyles.colors.praimaryColor} />
           <Navigation />
         </SafeAreaView >
-      {/* </KeyboardAvoidingView> */}
+        {/* </KeyboardAvoidingView> */}
+      </PaperProvider>
     </AuthProvider>
   );
 }

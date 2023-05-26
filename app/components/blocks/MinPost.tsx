@@ -5,9 +5,9 @@ import { Training } from '../../types';
 import MapWithResult from './MapWithResult';
 import { convertTime, convertDistance, convertPace } from './../../scrypts/sport';
 import defaultStyles from '../../styles/defaultStyles';
-// import DistanceText from './DistanceText';
-// import PaceText from './PaceText';
-// import TimeText from './TimeText';
+import { Tooltip } from 'react-native-paper';
+import Requests from '../../scrypts/request';
+
 
 type post = {
     training: Training,
@@ -16,14 +16,14 @@ type post = {
 
 export default function MinPost(props: post) {
 
-    function openTreaning(training: Training){
+    function openTreaning(training: Training) {
         props.navigation.navigate('Training', {
             id: training.id,
             sendTraining: training,
         });
     }
 
-    function openProfile(profileId: number){
+    function openProfile(profileId: number) {
         props.navigation.navigate('Profile', {
             profileId,
         });
@@ -46,18 +46,49 @@ export default function MinPost(props: post) {
                             <Image
                                 style={styles.avatar}
                                 source={{
-                                    uri: 'https://reactnative.dev/img/tiny_logo.png',
+                                    // uri: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg',
+                                    uri: Requests.getAvatar(props.training.user.avatar),
+                                    //https://reactnative.dev/img/tiny_logo.png
+                                    // https://upload.wikimedia.org/wikipedia/commons/4/4d/Cat_November_2010-1a.jpg
+                                    //localhost:8000/img/1685108228997.jpg
                                 }}
                             />
                         </Pressable>
-                        <Text style={styles.name}>{props.training.user.name} {props.training.user.surname}</Text>
+                        <View style={styles.nameContainer}>
+                            <Text style={styles.name}>{props.training.user.name} {props.training.user.surname}</Text>
+                        </View>
+                        <View style={styles.medalContainer}>
+                            {props.training.best_distance ?
+                                <Tooltip
+                                    title="Длинная тренировка"
+                                >
+                                    {/* <Button title='qwe' onPress={()=>{}}/> */}
+                                    <Image
+                                        style={styles.medal}
+                                        source={require("../../../assets/distance.png")}
+                                    />
+                                </Tooltip>
+                                :
+                                <></>
+                            }
+
+                            {props.training.best_pace ?
+                                <Tooltip
+                                    title="Лучшая скорость"
+                                >
+                                    <Image
+                                        style={styles.medal}
+                                        source={require("../../../assets/pace.png")}
+                                    />
+                                </Tooltip>
+                                :
+                                <></>
+                            }
+                        </View>
                     </View>
                     <View
                         style={styles.trainingInfo}
                     >
-                        {/* <DistanceText style={styles.result} value={props.training.distance} />
-                        <TimeText style={styles.result} value={props.training.time} />
-                        <PaceText style={styles.result} value={props.training.pace} /> */}
                         <View>
                             <Text style={styles.text}>Дистанция</Text>
                             <Text style={styles.text}>{convertDistance(props.training.distance)}</Text>
@@ -71,14 +102,6 @@ export default function MinPost(props: post) {
                             <Text style={styles.text}>{convertPace(props.training.pace)}</Text>
                         </View>
                     </View>
-
-
-                    {/* <View style={styles.info}>
-
-                        <View style={styles.results}>
-
-                        </View>
-                    </View> */}
                 </View>
                 <View style={styles.map}>
                     <MapWithResult
@@ -118,6 +141,18 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         marginLeft: 10,
     },
+    medalContainer: {
+        flexGrow: 1,
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "flex-end",
+    },
+    medal: {
+        width: 40,
+        height: 40,
+        // backgroundColor: "red",
+        marginRight: 10,
+    },
     userInfo: {
         flexDirection: "row",
     },
@@ -125,17 +160,25 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around"
     },
-    text:{
+    text: {
         ...defaultStyles.normalText,
-        textAlign: "center", 
+        textAlign: "center",
+    },
+    hoverText: {
+        fontSize: 14,
+        textAlign: "center",
     },
     info: {
         alignItems: "baseline",
         overflowWrap: "break-word",
     },
+    nameContainer: {
+        justifyContent: "center",
+    },
     name: {
         ...defaultStyles.h2,
         paddingHorizontal: 20,
+
     },
     results: {
         flexDirection: "row",

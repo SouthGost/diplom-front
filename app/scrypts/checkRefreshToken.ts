@@ -13,19 +13,23 @@ export async function requestWithToken(
         if (res.ok) {
             goodAction(res);
             return;
-        } else {
+        } else if (res.status == 403) {
             const refreshData = await checkRefreshToken(setUser);
+            console.log(refreshData)
 
             if (refreshData) {
-                res = await req(accessToken);
+                res = await req(refreshData.accessToken);
                 if (res.ok) {
                     goodAction(res);
                     return;
                 }
             }
+        } else {
+            console.log("Токен мог истеч, а ошибка не 403");
         }
-        //добавить сохранение для кнопки назад
-    } catch (error) { }
+    } catch (error) {
+        console.log(error);
+    }
     badAction();
 }
 

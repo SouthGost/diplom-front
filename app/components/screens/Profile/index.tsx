@@ -39,7 +39,7 @@ export default function Profile({ route, navigation }: any) {
         setProfileInfo(undefined);
         profileInfoLoad();
 
-    }, [profileId])
+    }, [])
 
 
     return (

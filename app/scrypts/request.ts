@@ -1,3 +1,4 @@
+import { DocumentPickerResponse } from "react-native-document-picker";
 import { Point } from "./../types";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -55,7 +56,7 @@ class Requests {
     //     return await Requests.getRequest("news");
     // }
 
-    static async getUsers(search: string, lastId?: number){
+    static async getUsers(search: string, lastId?: number) {
         return await Requests.getRequest(`api/users/list?last_id=${lastId}&search=${search}`);
     }
 
@@ -94,12 +95,45 @@ class Requests {
     }
 
     static async subscribe(userId: number, accessToken: string) {
-        return await Requests.postRequest(`api/users/${userId}/subscribe`, {}, accessToken);
+        return await Requests.postRequest(`api/profile/${userId}/subscribe`, {}, accessToken);
     }
 
     static async unsubscribe(userId: number, accessToken: string) {
-        return await Requests.postRequest(`api/users/${userId}/unsubscribe`, {}, accessToken);
+        return await Requests.postRequest(`api/profile/${userId}/unsubscribe`, {}, accessToken);
     }
+
+    static async loadImage(file: DocumentPickerResponse, accessToken: string) {
+        let data = new FormData()
+        // let reader = new FileReader() 
+        // reader.readAsDataURL(file)
+        // @ts-ignore
+        data.append('avatar', { uri: file.uri, type: file.type!, name: file.name! })
+        // data.append('Content-Type', 'image/png');
+        return await fetch(domain + `api/profile/change/avatar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': 'Bearer ' + accessToken,
+            },
+            body: data
+        });
+    }
+
+    static getAvatar(avatar: string | null) {
+        if (avatar) {
+            return domain + `img/${avatar}`;
+        }
+        return domain + 'img/default.png';
+    }
+
+    static async changeName(name: string, surname: string, accessToken: string) {
+        return await Requests.postRequest(`api/profile/change/name`, { name, surname }, accessToken);
+    }
+
+    static async changePassword(oldPassword: string, newPassword: string, accessToken: string) {
+        return await Requests.postRequest(`api/profile/change/password`, { oldPassword, newPassword }, accessToken);
+    }
+
 }
 
 export default Requests;

@@ -70,7 +70,10 @@ export default function Header(props: props) {
                 <Image
                     style={styles.avatar}
                     source={{
-                        uri: 'https://reactnative.dev/img/tiny_logo.png',
+                        // uri: 'https://reactnative.dev/img/tiny_logo.png',
+                        uri: Requests.getAvatar(props.profileInfo!.avatar),
+                        // uri: 'localhost:8000/img/1685108228997.jpg',
+                         //http://localhost:8000/img/513c486cf93454e34bc6688048ae8afc
                     }}
                 />
                 <View style={styles.column}>

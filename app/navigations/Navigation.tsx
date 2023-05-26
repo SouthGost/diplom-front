@@ -11,6 +11,7 @@ import Start from '../components/screens/Start';
 import Login from '../components/screens/Login';
 import Register from '../components/screens/Register';
 import Search from '../components/screens/Search';
+import EditProfile from '../components/screens/EditProfile';
 
 // function HomeScreen() {
 //     return (
@@ -38,6 +39,7 @@ export default function Navigation() {
                 <Stack.Screen name="Profile" component={Profile} />
                 <Stack.Screen name="Training" component={Training} />
                 <Stack.Screen name="Search" component={Search} />
+                <Stack.Screen name="EditProfile" component={EditProfile} />
                 
                 <Stack.Screen name="Temp" component={Temp} />{/* */}
             </Stack.Navigator>
