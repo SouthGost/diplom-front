@@ -1,24 +1,21 @@
-// import React from 'react';
-// import { StatusBar } from 'expo-status-bar';
 import React, { useState, useContext, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView, Animated } from 'react-native';
 import Navbar from '../../../navigations/Navbar';
 import Requests from '../../../scrypts/request';
 import { Training, User } from '../../../types';
 import Header from './Header';
-import PostsScroll from '../../blocks/PostsScroll';
+import ElementsScroll from '../../blocks/ElementsScroll';
 import { AuthContext } from '../../../context/AuthContext';
 import MyHeader from './MyHeader';
 import { requestWithToken } from '../../../scrypts/checkRefreshToken';
-import MinPost from '../../blocks/MinPost';
+import Post from '../../blocks/Post';
 
 
 
 export default function Profile({ route, navigation }: any) {
-    const { accessToken, setUser, id } = useContext<any>(AuthContext);
     const { profileId } = route.params;
+    const { id } = useContext<any>(AuthContext);
     const [profileInfo, setProfileInfo] = useState<User>();
-    // const scrollOffsetY = useRef<Animated.Value>(new Animated.Value(0)).current;
 
     async function profileInfoLoad() {
         try {
@@ -26,28 +23,20 @@ export default function Profile({ route, navigation }: any) {
             if (res.ok) {
                 const data = await res.json();
                 setProfileInfo(data);
-            } else {
-                console.log("Плох респонс");
             }
-        } catch (err) {
-            console.log("Плох респонс");
-        }
+        } catch (err) {}
     }
-
 
     useEffect(() => {
         setProfileInfo(undefined);
         profileInfoLoad();
-
-    }, [])
-
+    }, [profileId])
 
     return (
         <>
             <View style={styles.profile}>
-                {/* <Posts navigation={navigation} trainings={trainings}/> */}
                 {profileInfo !== undefined ?
-                    <PostsScroll
+                    <ElementsScroll
                         header={
                             id === profileId ?
                                 <MyHeader profileInfo={profileInfo} navigation={navigation} />
@@ -55,11 +44,11 @@ export default function Profile({ route, navigation }: any) {
                                 <Header profileInfo={profileInfo} />
                         }
                         length={3}
-                        emptyMessage='Начните пробежку в разделе тренировка'
+                        emptyMessage='Еще нет тренировок'
                         loadFunction={(lastId?: number) => {
                             return Requests.getUserTrainings(profileInfo.id, lastId)
                         }}
-                        elementView={elem => <MinPost
+                        elementView={elem => <Post
                             key={`post ${elem.id}`}
                             training={elem}
                             navigation={navigation}
@@ -68,8 +57,6 @@ export default function Profile({ route, navigation }: any) {
                     :
                     <></>
                 }
-
-                {/* {HeaderPostsScroll} */}
             </View>
             <Navbar navigation={navigation} />
         </>
@@ -80,8 +67,6 @@ const styles = StyleSheet.create({
     profile: {
         flex: 1,
         backgroundColor: '#fff',
-        // alignItems: 'center',
-        // justifyContent: 'center',
     },
     header: {
         justifyContent: 'center',

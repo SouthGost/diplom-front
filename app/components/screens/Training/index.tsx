@@ -1,5 +1,4 @@
 import React from 'react';
-// import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView, ActivityIndicator } from 'react-native';
 import Navbar from '../../../navigations/Navbar';
@@ -19,7 +18,6 @@ export default function TrainingView({ route, navigation }: any) {
             let res = await Requests.getTraining(id);
             if (res.ok) {
                 const data = await res.json();
-                // console.log("qwe", data.id);
                 setTraining(data);
             } else {
                 console.log("Не хороший ответ");
@@ -32,7 +30,7 @@ export default function TrainingView({ route, navigation }: any) {
     useEffect(() => {
         setTraining(sendTraining);
         getFullInfo();
-    }, []);
+    }, [id, sendTraining]);
 
 
 
@@ -56,7 +54,7 @@ export default function TrainingView({ route, navigation }: any) {
                         </View>
                         <SwipeBox>
                             <View>
-                                <BoxContent training={training} />
+                                <BoxContent navigation={navigation} training={training} />
                             </View>
                         </SwipeBox>
                     </>
@@ -77,22 +75,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         position: "relative",
-        // alignItems: 'center',
-        // justifyContent: 'center',
     },
     scrollContainer: {
         flex: 1,
         width: "100%",
-        // backgroundColor: '#000',
-        // height: "100%",
     },
     map: {
-        // flex: 1,
         width: "100%",
         height: "100%",
-    },
-    analysisColumn: {
-
     },
     analysisRow: {
         flexDirection: "row",

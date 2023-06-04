@@ -1,5 +1,4 @@
 import React from 'react';
-// import { StatusBar } from 'expo-status-bar';
 import { useState, useContext } from 'react';
 import defaultStyles from '../styles/defaultStyles';
 import { AuthContext } from './../context/AuthContext';
@@ -33,11 +32,11 @@ export default function Navbar({ navigation }: any) {
                 style={styles.elem}
             >
                 <Button
-                    title="Профиль"//Profile  Pace
+                    title="Профиль"
                     color={defaultStyles.colors.praimaryColor}
                     onPress={() => navigation.navigate('Profile', {
                         profileId: id,
-                    })}//Profile   Pace
+                    })}
                 />
             </View>
         </View>

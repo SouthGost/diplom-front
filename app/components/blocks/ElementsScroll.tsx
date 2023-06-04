@@ -1,28 +1,27 @@
 import React from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { ScrollView, View, Text, ActivityIndicator, StyleSheet, NativeScrollEvent } from 'react-native';
-import { AuthContext } from './../../context/AuthContext';
-import checkRefreshToken from './../../scrypts/checkRefreshToken';
-import Requests from './../../scrypts/request';
-import { Training } from './../../types';
-import MinPost from './../blocks/MinPost';
+import { AuthContext } from '../../context/AuthContext';
+import checkRefreshToken from '../../scrypts/checkRefreshToken';
+import Requests from '../../scrypts/request';
+import Post from './Post';
 import defaultStyles from '../../styles/defaultStyles';
 
 type props = {
     loadFunction: (lastId?: number) => Promise<any>,
     header?: JSX.Element,
-    emptyMessage?: string,
+    emptyMessage: string,
     length: number,
     elementView: (elem: any) => JSX.Element,
 }
 
-export default function PostsScroll(props: props) {
+export default React.memo(function ElementsScroll(props: props) {
     const { accessToken, setUser } = useContext<any>(AuthContext);
-    const [elements, setElements] = useState<Training[]>();
+    const [elements, setElements] = useState<any[]>();
     const [isFinishRequest, setIsFinishRequest] = useState(true);
     const [isEnd, setIsEnd] = useState(false);
-    // elements Elements
-    function checkEnd(newElements: Training[]) {
+
+    function checkEnd(newElements: any[]) {
         if (newElements.length < props.length) {
             setIsEnd(true);
         }
@@ -30,7 +29,7 @@ export default function PostsScroll(props: props) {
 
     async function setLoadElements(res: Response) {
         const data = await res.json();
-        checkEnd(data.elements); // aga
+        checkEnd(data.elements);
         setElements((prevElements) => {
             if (prevElements !== undefined)
                 return [
@@ -44,11 +43,9 @@ export default function PostsScroll(props: props) {
     async function loadElements(lastID?: number) {
         setIsFinishRequest(false);
         try {
-            console.log("Начало!!!");
             let res = await props.loadFunction(lastID);
             if (res.ok) {
                 setLoadElements(res);
-                console.log("КОНЕЦ???");
             } else {
                 const refreshData = await checkRefreshToken(setUser);
 
@@ -56,21 +53,16 @@ export default function PostsScroll(props: props) {
                     res = await props.loadFunction(lastID);
                     if (res.ok) {
                         setLoadElements(res);
-                    } else {
-                        console.log("Не хороший ответ");
                     }
                 }
             }
-        } catch (err) {
-            console.log("Плох респонс");
-        }
+        } catch (err) { }
         setIsFinishRequest(true);
     }
 
     useEffect(() => {
         setElements(undefined)
         loadElements();
-        console.log("zagruz")
     }, [props.loadFunction]);
 
     function loadNextTraings() {
@@ -100,7 +92,7 @@ export default function PostsScroll(props: props) {
                             :
                             <></>
                         }
-                        <View style={styles.emptyMessage} >{/*style={styles.emptyMessage} */}
+                        <View style={styles.emptyMessage} >
                             <Text style={styles.emptyMessageText}>{props.emptyMessage ? props.emptyMessage : "Пусто"}</Text>
                         </View>
                     </>
@@ -125,7 +117,7 @@ export default function PostsScroll(props: props) {
         </>
 
     );
-}
+})
 
 const styles = StyleSheet.create({
     content: {

@@ -6,20 +6,11 @@ import Profile from '../components/screens/Profile';
 import Home from '../components/screens/Home';
 import StartTraining from '../components/screens/StartTraining';
 import Training from '../components/screens/Training';
-import Temp from '../components/screens/Temp';
 import Start from '../components/screens/Start';
 import Login from '../components/screens/Login';
 import Register from '../components/screens/Register';
 import Search from '../components/screens/Search';
 import EditProfile from '../components/screens/EditProfile';
-
-// function HomeScreen() {
-//     return (
-//         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//             <Text>Home Good</Text>
-//         </View>
-//     );
-// }
 
 const Stack = createNativeStackNavigator();
 
@@ -41,7 +32,6 @@ export default function Navigation() {
                 <Stack.Screen name="Search" component={Search} />
                 <Stack.Screen name="EditProfile" component={EditProfile} />
                 
-                <Stack.Screen name="Temp" component={Temp} />{/* */}
             </Stack.Navigator>
         </NavigationContainer>
     );

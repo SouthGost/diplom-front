@@ -5,8 +5,8 @@ import { AuthContext } from './../../../context/AuthContext';
 import Navbar from '../../../navigations/Navbar';
 import Requests from '../../../scrypts/request';
 import { Training } from '../../../types';
-import MinPost from '../../blocks/MinPost';
-import PostsScroll from '../../blocks/PostsScroll';
+import Post from '../../blocks/Post';
+import ElementsScroll from '../../blocks/ElementsScroll';
 import defaultStyles from '../../../styles/defaultStyles';
 
 export default function Home({ navigation }: any) {
@@ -26,11 +26,11 @@ export default function Home({ navigation }: any) {
                     />
                 </Pressable>
             </View>
-            <PostsScroll
+            <ElementsScroll
                 length={3}
                 loadFunction={(lastID) => Requests.getFeed(id, lastID)}
                 emptyMessage='Подпишитесь на спортсменов, чтобы видеть их тренировки'
-                elementView={elem => <MinPost
+                elementView={elem => <Post
                     key={`post ${elem.id}`}
                     training={elem}
                     navigation={navigation}

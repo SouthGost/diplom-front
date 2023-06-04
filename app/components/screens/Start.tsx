@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import checkRefreshToken from '../../scrypts/checkRefreshToken';
 
 export default function Start({ navigation }: any) {
-    const { setUser, accessToken } = useContext<any>(AuthContext);
+    const { setUser } = useContext<any>(AuthContext);
 
     function alert(message: string) {
         ToastAndroid.showWithGravity(message, ToastAndroid.LONG, ToastAndroid.TOP);
@@ -15,19 +15,14 @@ export default function Start({ navigation }: any) {
 
     async function checkRefreshKey() {
         try {
-            //убрать
-            // await AsyncStorage.setItem('refresh_key', "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsImxvZ2luIjoiYWRtaW4iLCJwYXNzd29yZCI6IiQyYiQxMCRVUGVXc3g4ZEVsaGNwRVp2NXB6Zi8uUzVXSC9HdU5naHlZV1RIS21XRldqV1BTT2t6eGs4LiIsImlhdCI6MTY3NjYzMjcxMH0.55i8W9gSDO-zXMmy62lIQxfiGk8xzLxFDlbUfVhCTl8");
             const data = await checkRefreshToken(setUser);
-            // const refreshKey = await AsyncStorage.getItem('refresh_key');
             if (data) {
                 navigation.navigate('Home');
                 return;
 
             }
-            //сценарий истекшего токена
             navigation.navigate('Login');
         } catch (error) {
-            //сценарий недоступного сервера
             alert("Приложение недоступно. Попробуйте позже")
         }
     }
@@ -44,8 +39,6 @@ export default function Start({ navigation }: any) {
                 source={require("../../../assets/logo.png")}
                 style={{ width: 200, height: 200 }}
             />
-
-
             <ActivityIndicator size={100} />
         </View>
     );

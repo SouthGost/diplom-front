@@ -1,19 +1,19 @@
 import React from 'react';
 import { ScrollView, View, Text, ActivityIndicator, StyleSheet, Button, Image } from 'react-native';
-import { User } from '../../types';
-import defaultStyles from '../../styles/defaultStyles';
+import { User } from '../../../types';
+import defaultStyles from '../../../styles/defaultStyles';
+import Requests from '../../../scrypts/request';
 
 type props = {
     user: User,
     navigation: any,
 };
 
-export default function MinUser(props: props) {
+export default function FoundUser(props: props) {
 
     function openUser(user: User) {
         props.navigation.navigate('Profile', {
             profileId: user.id,
-            // sendTraining: training,
         });
     }
 
@@ -22,7 +22,7 @@ export default function MinUser(props: props) {
             <Image
                 style={styles.avatar}
                 source={{
-                    uri: 'https://reactnative.dev/img/tiny_logo.png',
+                    uri: Requests.getAvatar(props.user.avatar),
                 }}
             />
             <View style={styles.nameContainer}>
@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 50,
-        // marginLeft: 10,
     },
     nameContainer: {
         flexGrow: 1,

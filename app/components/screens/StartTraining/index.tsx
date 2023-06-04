@@ -16,7 +16,6 @@ export default function StartTraining({ navigation }: any) {
                 title: 'Доступ к геолокации',
                 message:
                     'Разрешите приложению доступ к вашей геолокации',
-                // buttonNegative: 'Отклонить',
                 buttonNeutral: "Отклонить",
                 buttonPositive: 'Разрешить',
             },
@@ -27,17 +26,6 @@ export default function StartTraining({ navigation }: any) {
             console.log('НЕТ');
         }
     }
-
-    // async function checkPermission(permission: Permission) {
-    //     const granted = await PermissionsAndroid.check(
-    //         permission
-    //     );
-    //     if (granted) {
-    //         console.log('Есть!');
-    //     } else {
-    //         console.log('Не разрешино');
-    //     }
-    // }
 
     function alert(message: string) {
         ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.BOTTOM, 0, 80);
@@ -75,7 +63,7 @@ export default function StartTraining({ navigation }: any) {
         <>
             <View style={styles.container}>
                 {isAllPermissions ?
-                    <Statistic />
+                    <Statistic navigation={navigation} />
                     :
                     <View style={styles.messageContainer}>
                         <Text style={styles.message}>
@@ -115,8 +103,5 @@ const styles = StyleSheet.create({
         marginTop: 20,
         alignItems: 'center',
     },
-    button: {
-        // width: "fit-content"
-    }
 
 });

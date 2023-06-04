@@ -10,8 +10,6 @@ import { name as appName } from './app.json';
 
 const MyHeadlessTask = async () => {
     console.log('Receiving HeartBeat!');
-    console.log("3");
-
 };
 
 

@@ -3,8 +3,9 @@ import { Point } from "./../types";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const domain = "http://169.254.252.193:8000/";
-const domain = "http://192.168.1.252:8000/";
-// const domain = "http://10.185.231.234:8000/";
+// const domain = "http://192.168.1.252:8000/";
+const domain = "http://diplombacktraining.loca.lt/";
+// const domain = "http://10.185.231.197:8000/";
 // const domain = "http://10.185.233.134:8000/";
 
 
@@ -28,6 +29,7 @@ class Requests {
     }
 
     private static async postRequest(url: string, body?: any, token?: string) {
+        console.log(domain + url)
         return await fetch(domain + url, {
             method: 'POST',
             headers: {
@@ -49,12 +51,6 @@ class Requests {
     static async refresh(refreshKey: string) {
         return await Requests.postRequest("api/auth/refresh", {}, refreshKey);
     }
-
-
-    // НЕ ВЕРНЫЙ КОД!!!!!!!
-    // static async getNews() {
-    //     return await Requests.getRequest("news");
-    // }
 
     static async getUsers(search: string, lastId?: number) {
         return await Requests.getRequest(`api/users/list?last_id=${lastId}&search=${search}`);
@@ -90,10 +86,6 @@ class Requests {
         return await Requests.postRequest("api/trainings/add", { points }, accessToken);
     }
 
-    static async getTrainingAnalysis(id: number) {
-        return await Requests.getRequest(`api/trainings/${id}/analysis`);
-    }
-
     static async subscribe(userId: number, accessToken: string) {
         return await Requests.postRequest(`api/profile/${userId}/subscribe`, {}, accessToken);
     }
@@ -104,11 +96,8 @@ class Requests {
 
     static async loadImage(file: DocumentPickerResponse, accessToken: string) {
         let data = new FormData()
-        // let reader = new FileReader() 
-        // reader.readAsDataURL(file)
         // @ts-ignore
         data.append('avatar', { uri: file.uri, type: file.type!, name: file.name! })
-        // data.append('Content-Type', 'image/png');
         return await fetch(domain + `api/profile/change/avatar`, {
             method: 'POST',
             headers: {

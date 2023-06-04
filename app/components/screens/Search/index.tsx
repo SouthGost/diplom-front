@@ -1,14 +1,10 @@
 import React from 'react';
 import { useEffect, useState, useContext } from 'react';
 import { TextInput, View, Text, Keyboard, StyleSheet, NativeScrollEvent, KeyboardAvoidingView, Image } from 'react-native';
-import { AuthContext } from './../../../context/AuthContext';
-import Navbar from '../../../navigations/Navbar';
 import Requests from '../../../scrypts/request';
-import { Training } from '../../../types';
-import MinPost from '../../blocks/MinPost';
-import PostsScroll from '../../blocks/PostsScroll';
+import ElementsScroll from '../../blocks/ElementsScroll';
 import defaultStyles from '../../../styles/defaultStyles';
-import MinUser from '../../blocks/MinUser';
+import FoundUser from './FoundUser';
 
 export default function Search({ navigation }: any) {
     const [search, setSearch] = useState("");
@@ -44,12 +40,12 @@ export default function Search({ navigation }: any) {
             </View>
 
             {/* <View style={{ flexGrow: 1 }}> */}
-            <PostsScroll
+            <ElementsScroll
                 length={10}
                 loadFunction={(lastId) => Requests.getUsers(search, lastId)}
                 emptyMessage='Таких пользователей нет'
                 elementView={elem =>
-                    <MinUser
+                    <FoundUser
                         key={`post ${elem.id}`}
                         user={elem}
                         navigation={navigation}
@@ -68,18 +64,14 @@ export default function Search({ navigation }: any) {
 const styles = StyleSheet.create({
 
     header: {
-        // flex: 0,
         backgroundColor: defaultStyles.colors.praimaryColor,
         height: 50,
         flexDirection: 'row',
-        // justifyContent: "flex-end",
         alignItems: "center",
         paddingHorizontal: 10,
     },
     input: {
         paddingLeft: 75,
-        // borderWidth: 0.5,
-        // borderRadius: 4,
         width: 400,
         ...defaultStyles.normalText,
         color: "white",

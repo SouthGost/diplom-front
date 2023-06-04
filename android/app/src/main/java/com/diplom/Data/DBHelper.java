@@ -26,7 +26,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table " + TABLE_POINTS + " (" +
                         KEY_PART + " integer ," +
-                        KEY_TIME + " integer primary key," +
+                        KEY_TIME + " bigint primary key," +
                         KEY_LATITUDE + " real ," +
                         KEY_LONGITUDE + " real " +
                 ")"

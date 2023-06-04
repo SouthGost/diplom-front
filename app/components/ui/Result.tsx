@@ -14,9 +14,6 @@ export default function Result(props: Result) {
             paddingHorizontal: 10,
             paddingVertical: 5,
             flexGrow: 1,
-            // borderColor: "black",
-            // borderWidth: 1,
-            // borderStyle: "solid",
         }}>
             <Text
                 style={{

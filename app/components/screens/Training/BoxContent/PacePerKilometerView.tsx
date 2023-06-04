@@ -5,6 +5,7 @@ import { Training } from "../../../../types";
 import { convertTime, convertDistance, convertPace } from '../../../../scrypts/sport';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import PropTypes from 'prop-types';
+import defaultStyles from "../../../../styles/defaultStyles";
 
 type props = {
     pace_per_kilometers?: PacePerKilometer[],
@@ -23,17 +24,19 @@ export default function PacePerKilometerView(props: props) {
             ]}
             key={key}
         >
-            <Text>{`${pace_per_kilometer.kilometer}) ${convertPace(pace_per_kilometer.pace, true)} ${width}`}</Text>
+            <Text style={styles.text}>
+                {`${pace_per_kilometer.kilometer}) ${convertPace(pace_per_kilometer.pace, true)} мин/км`}
+            </Text>
         </View>
     }
 
     useEffect(() => {
         let analysisView_
 
-        if ( props.pace_per_kilometers === undefined) {
+        if (props.pace_per_kilometers === undefined) {
             analysisView_ = <ActivityIndicator size={40} />;
         } else {
-            if ( props.pace_per_kilometers.length === 0) {
+            if (props.pace_per_kilometers.length === 0) {
                 analysisView_ = <></>;
             } else {
                 if (props.pace_per_kilometers.length === 1) {
@@ -55,26 +58,18 @@ export default function PacePerKilometerView(props: props) {
 
                     let chartStep = 5;
                     let maxPaceDifference = worstPace - bestPace;
-                    // let formula: (pace: number) => number;
                     if (maxPaceDifference * 5 > 50) {
                         chartStep = 50 / maxPaceDifference;
                     }
 
-                    console.log("maxPaceDifference", maxPaceDifference);
-                    console.log("bestPace", bestPace);
-                    console.log("worstPace", worstPace);
-                    console.log("chartStep", chartStep);
-
                     const getWidth = (pace: number) => {
-                        console.log("pace", pace);
-                        console.log("width", Math.round(50 + (pace - bestPace) * chartStep));
 
                         return Math.round(50 + (pace - bestPace) * chartStep);
                     }
 
                     analysisView_ = <View>
                         {props.pace_per_kilometers.map((elem) =>
-                            getAnalysisViewElement(elem, getWidth(elem.pace), `pace per kilometer ${elem.kilometer}`) //change
+                            getAnalysisViewElement(elem, getWidth(elem.pace), `pace per kilometer ${elem.kilometer}`)
                         )}
                     </View>
                 }
@@ -90,9 +85,7 @@ export default function PacePerKilometerView(props: props) {
             {analysisView === undefined ?
                 <></>
                 :
-                <>
-                    {analysisView}
-                </>
+                analysisView
             }
         </>
 
@@ -102,6 +95,11 @@ export default function PacePerKilometerView(props: props) {
 const styles = StyleSheet.create({
     analysisRow: {
         flexDirection: "row",
-        backgroundColor: "#abb"
-    }
+        backgroundColor: "#abb",
+        marginBottom: 2,
+    },
+    text: {
+        ...defaultStyles.normalText,
+        paddingVertical: 5,
+    },
 });

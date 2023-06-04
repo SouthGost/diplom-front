@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { SQLiteDatabase } from 'react-native-sqlite-storage';
 import {
-    StyleSheet, Text, View, TouchableOpacity, Image, PermissionsAndroid, Permission
+    StyleSheet, Text, View, TouchableOpacity, Image, PermissionsAndroid, Permission, ToastAndroid
 } from 'react-native';
 import { clearPoints, getDBConnection, getPoints } from '../../../scrypts/db';
 import Map from '../../blocks/Map';
@@ -20,13 +20,18 @@ const { Training } = NativeModules;
 
 const trainingManagerEmitter = new NativeEventEmitter(Training);
 
+function alert(message: string) {
+    ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.BOTTOM, 0, 80);
+}
 
-export default function StatisticView() {
+
+export default function StatisticView({ navigation }: any) {
     const { accessToken, setUser } = useContext<any>(AuthContext);
     const [points, setPoints] = useState<Array<Point>>([]);
     const [lastPoint, setLastPoint] = useState<Point>();
     const [statistic, setStatistic] = useState<Statistic>();
     const [isRunning, setIsRunning] = useState(false);
+    const [isWaitAnswer, setIsWaitAnswer] = useState(false);
 
     async function updateInfo(db: SQLiteDatabase) {
         const newPoints = await getPoints(db);
@@ -39,7 +44,6 @@ export default function StatisticView() {
     async function createTrainingEventListner() {
         const db = await getDBConnection();
         updateInfo(db);
-        // await clearPoints(db);
 
         trainingManagerEmitter.removeAllListeners('Training_event');
 
@@ -70,58 +74,25 @@ export default function StatisticView() {
 
 
     async function saveTrack() {
+        setIsWaitAnswer(true);
         console.log("Сохранение");
         const db = await getDBConnection();
-        requestWithToken(
+        await requestWithToken(
             (accessToken_) => Requests.finishTraining(points, accessToken_),
             async (res) => {
-                console.log("Хороший ответ");
                 const data = await res.json();
                 await clearPoints(db);
+                navigation.navigate('Training', {
+                    id: data.id,
+                });
             },
             () => {
-                console.log("Не сохранился");
+                alert("Не удалось сохранить тренировку. попробуйте позже")
             },
             setUser,
             accessToken,
         );
-        // try {
-
-        //     // await clearPoints(db);
-        //     //проверять try catch лучше
-
-        //     let res = await Requests.finishTraining(points, accessToken);
-        //     if (res.ok) {
-        //         console.log("Хороший ответ1");
-        //         const data = await res.json();
-        //         await clearPoints(db);
-        //         // navigation.navigate('Post', {
-        //         //     id: data.id,
-        //         //     user_login: data.user_login,
-        //         // });
-        //     } else {
-        //         const refreshData = await checkRefreshToken(setUser);
-
-        //         if (refreshData) {
-        //             res = await Requests.finishTraining(points, refreshData.accessToken);
-        //             if (res.ok) {
-        //                 console.log("Хороший ответ2");
-        //                 const data = await res.json();
-        //                 await clearPoints(db);
-        //                 // navigation.navigate('Post', {
-        //                 //     id: data.id,
-        //                 //     user_login: data.user_login,
-        //                 // });
-        //             } else {
-        //                 console.log("Не хороший ответ");
-        //             }
-        //         }
-        //     }
-        //     //добавить сохранение для кнопки назад
-        // } catch (error) {
-        //     console.log("Не сохранился(мб)");
-        //     console.log(error);
-        // }
+        setIsWaitAnswer(false);
     }
 
     return (
@@ -140,55 +111,55 @@ export default function StatisticView() {
                 <></>
             }
             <View style={styles.buttonContainer}>
-                {isRunning ?
-                    <TouchableOpacity
-                        onPress={() => {
-                            pauseTrack();
-                        }}
-                        style={styles.roundButton}
-                    >
-                        <Text style={styles.buttonText}>Стоп</Text>
-                    </TouchableOpacity>
-                    :
-                    points.length == 0 ?
+                {!isWaitAnswer ?
+                    isRunning ?
                         <TouchableOpacity
-                            onPress={() => {
-                                startTrack();
-                            }}
-                            style={styles.roundButton}
+                            onPress={
+                                () => {
+                                    pauseTrack();
+                                }
+                            }
+                            style={styles.roundButton
+                            }
                         >
-                            <Text style={styles.buttonText}>Старт</Text>
+                            <Text style={styles.buttonText}>Стоп</Text>
                         </TouchableOpacity>
                         :
-                        <>
+                        points.length == 0 ?
                             <TouchableOpacity
                                 onPress={() => {
                                     startTrack();
                                 }}
                                 style={styles.roundButton}
                             >
-                                <Text style={styles.buttonText}>Продолжить</Text>
+                                <Text style={styles.buttonText}>Старт</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    saveTrack();
-                                }}
-                                style={styles.roundButton}
-                            >
-                                <Text style={styles.buttonText}>Сохранить</Text>
-                            </TouchableOpacity>
-                            {/* <TouchableOpacity
-                                onPress={async () => {
-                                    const db = await getDBConnection();
-                                    await clearPoints(db);
-                                }}
-                                style={styles.roundButton}
-                            >
-                                <Text style={styles.buttonText}>Отчистить</Text>
-                            </TouchableOpacity> */}
-                        </>
+                            :
+                            <>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        startTrack();
+                                    }}
+                                    style={styles.roundButton}
+                                >
+                                    <Text style={styles.buttonText}>Продолжить</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        if (!isWaitAnswer) {
+                                            saveTrack();
+                                        }
+                                    }}
+                                    style={styles.roundButton}
+                                >
+                                    <Text style={styles.buttonText}>Сохранить</Text>
+                                </TouchableOpacity>
+                            </>
+
+                    :
+                    <></>
                 }
-            </View>
+            </View >
         </>
     );
 };
@@ -205,8 +176,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 50,
         left: 20,
-        // flexDirection: "row",
-        // width: 120,
         justifyContent: "flex-start",
         backgroundColor: "rgba(255, 255, 255, 0.8)",
         borderStyle: "solid",

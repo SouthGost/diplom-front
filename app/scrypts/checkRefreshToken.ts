@@ -15,7 +15,6 @@ export async function requestWithToken(
             return;
         } else if (res.status == 403) {
             const refreshData = await checkRefreshToken(setUser);
-            console.log(refreshData)
 
             if (refreshData) {
                 res = await req(refreshData.accessToken);

@@ -6,7 +6,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import { requestWithToken } from "../../../scrypts/checkRefreshToken";
 import Requests from "../../../scrypts/request";
 
-export default function EditProfile({ route, navigation }: any) {
+export default function EditProfile({ route }: any) {
     const { profile } = route.params;
     const { setUser, accessToken } = useContext<any>(AuthContext);
 
@@ -18,14 +18,6 @@ export default function EditProfile({ route, navigation }: any) {
     const [newPassword, setNewPassword] = useState("");
     const [newPassword2, setNewPassword2] = useState("");
 
-    // useEffect(() => {
-    //     BackHandler.addEventListener('hardwareBackPress', () => {
-    //         navigation.navigate('Profile', {
-    //             profileId: profile.id,
-    //         })
-    //         return true;
-    //     });
-    // }, []);
 
     function alert(message: string) {
         ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.BOTTOM, 0, 80);
@@ -34,8 +26,7 @@ export default function EditProfile({ route, navigation }: any) {
     async function loadImage() {
         const newImageFile = await DocumentPicker.pickSingle({ type: DocumentPicker.types.images });
         setIsWaitAnswer(true);
-        console.log("file", newImageFile)
-        requestWithToken(
+        await requestWithToken(
             (accessToken_) => Requests.loadImage(newImageFile, accessToken_),
             async (res) => {
                 const data = await res.json();
@@ -61,7 +52,7 @@ export default function EditProfile({ route, navigation }: any) {
             return;
         }
         setIsWaitAnswer(true);
-        requestWithToken(
+        await requestWithToken(
             (accessToken_) => Requests.changeName(name, surname, accessToken_),
             async (res) => {
                 alert("Успех")
@@ -75,7 +66,7 @@ export default function EditProfile({ route, navigation }: any) {
         setIsWaitAnswer(false);
     }
 
-    //Менять
+    
     async function changePassword() {
         if (
             oldPassword == "" ||
@@ -92,7 +83,7 @@ export default function EditProfile({ route, navigation }: any) {
             return;
         }
         setIsWaitAnswer(true);
-        requestWithToken(
+        await requestWithToken(
             (accessToken_) => Requests.changePassword(oldPassword, newPassword, accessToken_),
             async (res) => {
                 setOldPassword("");

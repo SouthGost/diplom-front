@@ -150,16 +150,17 @@ const styles = StyleSheet.create({
     boxHeadText: {
         ...defaultStyles.h2,
         paddingTop: 5,
+        paddingBottom: 5,
         lineHeight: 24,
         fontWeight: 'bold',
         borderBottomColor: "black",
-        borderBottomWidth: 2,
+        borderBottomWidth: 1,
         borderBottomStyle: "soled",
         borderBottomStartRadius: 10
     },
     boxContent: {
         height: windowHeight - 230, //200,//
-        paddingHorizontal: 25,
+        paddingHorizontal: 15,
         overflow: "hidden"
     }
 });

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-// import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, View, ScrollView, TextInput, ToastAndroid } from 'react-native';
 import MyInput from '../../ui/MyInput';

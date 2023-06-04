@@ -59,15 +59,15 @@ export function convertTime(value: number, hideMillisecond?: boolean) {
 
     if (value >= 3600000) {
         time = `${hour}:${min}:${sec}`;
-    } else if (value >= 60000) {
-        time = `${min}:${sec}`;
     } else {
-        time = sec;
-        if (!hideMillisecond) {
-            const sotih = add0(div(value % 1000, 10), 2);
-            time += `.${sotih}`;
-        }
-        time += " с";
+        time = `${min}:${sec}`;
+        // } else {
+        //     time = sec;
+        //     // if (!hideMillisecond) {  if (value >= 60000)
+        //     //     const sotih = add0(div(value % 1000, 10), 2);
+        //     //     time += `.${sotih}`;
+        //     // }
+        //     time += " с";
     }
 
     return time;
@@ -78,16 +78,13 @@ export function getStatisticByPoints(points: Point[]): Statistic {
     let time = 0;
     let pace = 0;
 
-    // let lastPoint = points[0];
     let part = 0;
-
-    console.log("длинна в методе ",points.length);
 
     for (let i = 1; i < points.length; i++) {
         if (part == points[i].part) {
 
-            time += points[i].time - points[i-1].time;
-            distance += getDistanceFromLatLon(points[i-1], points[i]);
+            time += points[i].time - points[i - 1].time;
+            distance += getDistanceFromLatLon(points[i - 1], points[i]);
 
 
         } else {

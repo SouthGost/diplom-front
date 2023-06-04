@@ -63,9 +63,7 @@ export default function MyHeader(props: props) {
                         <Pressable
                             style={styles.menuButtonContainer}
                             onPress={() => {
-                                // if (props.profileInfo) {
-                                    setIsShowMenu(!isShowMenu);
-                                // }
+                                setIsShowMenu(!isShowMenu);
                             }}
                         >
                             <Image
@@ -151,14 +149,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingTop: 10,
         borderBottomColor: "black",
-        // borderBottomWidth: 1,
         borderStyle: "solid",
     },
     main: {
         flexDirection: "row",
-    },
-    exitButton: {
-        // height: 40
     },
     avatar: {
         width: 100,
@@ -172,14 +166,11 @@ const styles = StyleSheet.create({
     },
     name: {
         ...defaultStyles.title,
-        // width: "100%",
         textAlign: "center",
-        // backgroundColor: "red",
     },
     menuButtonContainer: {
         marginTop: 5,
         marginEnd: 5,
-        // backgroundColor: "gray",
         position: "relative",
     },
     menuIcon: {

@@ -70,10 +70,7 @@ export default function Header(props: props) {
                 <Image
                     style={styles.avatar}
                     source={{
-                        // uri: 'https://reactnative.dev/img/tiny_logo.png',
                         uri: Requests.getAvatar(props.profileInfo!.avatar),
-                        // uri: 'localhost:8000/img/1685108228997.jpg',
-                         //http://localhost:8000/img/513c486cf93454e34bc6688048ae8afc
                     }}
                 />
                 <View style={styles.column}>
@@ -89,19 +86,23 @@ export default function Header(props: props) {
                             <Button
                                 disabled={isWaitAnswer}
                                 color={isSubscribe ? "#A9A9A9" : "#1E90FF"}
-                                onPress={() => {
+                                onPress={async () => {
                                     setIsWaitAnswer(true);
                                     if (isSubscribe) {
-                                        unsubscribe()
+                                        await unsubscribe()
                                     } else {
-                                        subscribe()
+                                        await subscribe()
                                     }
                                     setIsWaitAnswer(false);
                                 }}
                                 title={isSubscribe ? "Отписаться" : "Подписаться"}
                             />
                             :
-                            <></>
+                            <Button
+                                disabled={true}
+                                color={"#A9A9A9"}
+                                title={"Загрузка"}
+                            />
                         }
 
                     </View>
@@ -130,14 +131,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingTop: 10,
         borderBottomColor: "black",
-        // borderBottomWidth: 1,
         borderStyle: "solid",
     },
     main: {
         flexDirection: "row",
-    },
-    exitButton: {
-        // height: 40
     },
     avatar: {
         width: 100,
@@ -151,11 +148,7 @@ const styles = StyleSheet.create({
     },
     name: {
         ...defaultStyles.title,
-        // fontWeight: "800",
-        // fontSize: 30,
-        // width: "100%",
         textAlign: "center",
-        // backgroundColor: "red",
     },
     followButton: {
         alignItems: 'center',
